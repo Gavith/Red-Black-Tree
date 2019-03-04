@@ -37,7 +37,7 @@ void RBTree::BSTinsert(Node * &root, Node * newNode)
 		}
 	}
 	else if (newNode->val < root->val) {//if the ket is less than
-		if (!root->left) {//i ftheres nothing in the node
+		if (!root->left) {//i ftheres nothing in the node 
 			root->left = newNode;//add it
 			newNode->parent = root;
 		}
