@@ -18,6 +18,7 @@ void RBTree::insert(int val)
 	nn->color = RED;
 
 	BSTinsert(head, nn);
+	fixTree(head, nn);
 
 	
 }
@@ -51,7 +52,7 @@ void RBTree::BSTinsert(Node * &root, Node * newNode)
 }
 
 
-void RBTree::fixTree(Node* head, Node* x) {
+void RBTree::fixTree(Node* &head, Node* x) {
 	if (x == head) {
 		x->color = BLACK;
 		return;
@@ -59,19 +60,19 @@ void RBTree::fixTree(Node* head, Node* x) {
 
 	Node* n = x;
 	Node* parent = n->parent;
-	Node* gParent;
+	Node* gParent = nullptr;
 	if(parent != nullptr)
 		gParent = parent->parent;
 	Node* uncle = getUncle(n);
 
-	if (parent->color != BLACK) {
-		if (uncle->color == RED) {
+	if (parent != nullptr && parent->color == RED) {
+		if (uncle != nullptr && uncle->color == RED) {
 			parent->color = BLACK;
 			uncle->color = BLACK;
 			gParent->color = RED;
 			fixTree(head, gParent);
 		}
-		else if (uncle->color == BLACK) {
+		else if (uncle == nullptr || uncle->color == BLACK) {
 			if (parent == gParent->left && n == parent->left) { //left left
 				rotateRight(head, gParent);
 				swapNodeColor(gParent, parent);
@@ -82,16 +83,20 @@ void RBTree::fixTree(Node* head, Node* x) {
 				n = parent;
 				rotateRight(head, gParent);
 				swapNodeColor(gParent, parent);
+				fixTree(head, n->parent);
 			}
 			else if (parent == gParent->right && n == parent->right) { //right right
+				cout << endl << "test" << endl;
 				rotateLeft(head, gParent);
 				swapNodeColor(gParent, parent);
+				fixTree(head, parent);
 			}
 			else if (parent == gParent->right && n == parent->left) { //right left
 				rotateRight(head, parent);
 				n = parent;
 				rotateLeft(head, gParent);
 				swapNodeColor(gParent, parent);
+				fixTree(head, n->parent);
 			}
 			
 		}

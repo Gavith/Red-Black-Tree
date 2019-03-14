@@ -31,7 +31,7 @@ private:
 	void BSTinsert(Node* &root, Node* newNode);
 	void printTreeColorUtil(Node * root, int space);
 	void printTreeUtil(Node* root, int space);
-	void fixTree(Node* head, Node* nn); 
+	void fixTree(Node* &head, Node* nn); 
 	Node* getUncle(Node* n);
 	void rotateRight(Node* &head, Node* root);
 	void rotateLeft(Node* &head, Node* root);
