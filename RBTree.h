@@ -25,9 +25,11 @@ public:
 	void insert(int val);
 	void printTree();
 	void printTreeColor();
+	void resetTree();
 private:
 	Node* head;
 
+	void resetTreeUtil(Node* root);
 	void BSTinsert(Node* &root, Node* newNode);
 	void printTreeColorUtil(Node * root, int space);
 	void printTreeUtil(Node* root, int space);

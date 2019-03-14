@@ -23,6 +23,19 @@ void RBTree::insert(int val)
 	
 }
 
+void RBTree::resetTree()
+{
+	resetTreeUtil(head);
+	head = nullptr;
+}
+
+void RBTree::resetTreeUtil(Node * root)
+{
+	if (root->left) resetTreeUtil(root->left);
+	if (root->right) resetTreeUtil(root->right);
+	delete root;
+}
+
 void RBTree::BSTinsert(Node * &root, Node * newNode)
 {
 	if (root == nullptr) {
@@ -50,7 +63,6 @@ void RBTree::BSTinsert(Node * &root, Node * newNode)
 		}
 	}
 }
-
 
 void RBTree::fixTree(Node* &head, Node* x) {
 	if (x == head) {
@@ -80,23 +92,20 @@ void RBTree::fixTree(Node* &head, Node* x) {
 			}
 			else if (parent == gParent->left && n == parent->right) { //left right
 				rotateLeft(head, parent);
-				n = parent;
 				rotateRight(head, gParent);
-				swapNodeColor(gParent, parent);
-				fixTree(head, n->parent);
+				swapNodeColor(gParent, n);
+				fixTree(head, n);
 			}
 			else if (parent == gParent->right && n == parent->right) { //right right
-				cout << endl << "test" << endl;
 				rotateLeft(head, gParent);
 				swapNodeColor(gParent, parent);
 				fixTree(head, parent);
 			}
 			else if (parent == gParent->right && n == parent->left) { //right left
 				rotateRight(head, parent);
-				n = parent;
 				rotateLeft(head, gParent);
-				swapNodeColor(gParent, parent);
-				fixTree(head, n->parent);
+				swapNodeColor(gParent, n);
+				fixTree(head, n);
 			}
 			
 		}
@@ -108,8 +117,9 @@ void RBTree::fixTree(Node* &head, Node* x) {
 
 void RBTree::printTreeColor()
 {
-	printTreeColorUtil(head, 0);
+	if (head != nullptr) printTreeColorUtil(head, 0);
 }
+
 //TAKEN FROM https://www.geeksforgeeks.org/print-binary-tree-2-dimensions/
 void RBTree::printTreeColorUtil(Node * root, int space)
 {
@@ -141,7 +151,7 @@ void RBTree::printTreeColorUtil(Node * root, int space)
 
 void RBTree::printTree()
 {
-	printTreeUtil(head, 0);
+	if (head != nullptr) printTreeUtil(head, 0);
 }
 //TAKEN FROM https://www.geeksforgeeks.org/print-binary-tree-2-dimensions/
 void RBTree::printTreeUtil(Node * root, int space)
