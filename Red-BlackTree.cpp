@@ -8,4 +8,5 @@ int main()
 	t.insert(2);
 	t.insert(20);
 	t.printTree();
+	t.printTreeColor();
 }

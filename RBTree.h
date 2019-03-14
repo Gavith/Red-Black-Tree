@@ -24,11 +24,19 @@ public:
 	~RBTree();
 	void insert(int val);
 	void printTree();
+	void printTreeColor();
 private:
 	Node* head;
 
 	void BSTinsert(Node* &root, Node* newNode);
+	void printTreeColorUtil(Node * root, int space);
 	void printTreeUtil(Node* root, int space);
+	void fixTree(Node* head, Node* nn); 
+	Node* getUncle(Node* n);
+	void rotateRight(Node* &head, Node* root);
+	void rotateLeft(Node* &head, Node* root);
+	void swapColor(Node* n);
+	void swapNodeColor(Node* n, Node* n2);
 
 };
 
