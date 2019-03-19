@@ -4,33 +4,37 @@
 
 RBTree::RBTree()
 {
-
+	head = nullptr;
 }
 
 
 RBTree::~RBTree()
-{
+{	//deletes the tree, nothin else really
+	resetTree();
 }
 
 void RBTree::insert(int val)
 {
+	//makes a node
 	Node* nn = new Node(val);
+	//base color is red
 	nn->color = RED;
-
+	//inserts through bst
 	BSTinsert(head, nn);
+	//then the complicated stuff
 	fixTree(head, nn);
 
 	
 }
 
 void RBTree::resetTree()
-{
-	resetTreeUtil(head);
+{	//util stuff
+	if(head) resetTreeUtil(head);
 	head = nullptr;
 }
 
 void RBTree::resetTreeUtil(Node * root)
-{
+{	//deletes the sub-trees before
 	if (root->left) resetTreeUtil(root->left);
 	if (root->right) resetTreeUtil(root->right);
 	delete root;
@@ -64,48 +68,45 @@ void RBTree::BSTinsert(Node * &root, Node * newNode)
 	}
 }
 
-void RBTree::fixTree(Node* &head, Node* x) {
-	if (x == head) {
-		x->color = BLACK;
+void RBTree::fixTree(Node* &head, Node* x) 
+{	//arg this was annoying
+	if (x == head) {//if the node is the head
+		x->color = BLACK;//make sure it follows the rules
 		return;
 	}
-
+	//getting all the things
 	Node* n = x;
 	Node* parent = n->parent;
 	Node* gParent = nullptr;
-	if(parent != nullptr)
+	if(parent != nullptr)//make sure no errors happen
 		gParent = parent->parent;
 	Node* uncle = getUncle(n);
 
-	if (parent != nullptr && parent->color == RED) {
-		if (uncle != nullptr && uncle->color == RED) {
-			parent->color = BLACK;
+	if (parent != nullptr && parent->color == RED) {//overarching check
+		if (uncle != nullptr && uncle->color == RED) {//case 1
+			parent->color = BLACK; //just changes colors and repeats
 			uncle->color = BLACK;
 			gParent->color = RED;
 			fixTree(head, gParent);
 		}
-		else if (uncle == nullptr || uncle->color == BLACK) {
+		else if ((uncle == nullptr || uncle->color == BLACK) && parent->color == RED) {//case 2
 			if (parent == gParent->left && n == parent->left) { //left left
 				rotateRight(head, gParent);
 				swapNodeColor(gParent, parent);
-				fixTree(head, parent);
 			}
 			else if (parent == gParent->left && n == parent->right) { //left right
 				rotateLeft(head, parent);
 				rotateRight(head, gParent);
 				swapNodeColor(gParent, n);
-				fixTree(head, n);
 			}
 			else if (parent == gParent->right && n == parent->right) { //right right
 				rotateLeft(head, gParent);
 				swapNodeColor(gParent, parent);
-				fixTree(head, parent);
 			}
 			else if (parent == gParent->right && n == parent->left) { //right left
 				rotateRight(head, parent);
 				rotateLeft(head, gParent);
 				swapNodeColor(gParent, n);
-				fixTree(head, n);
 			}
 			
 		}
@@ -177,7 +178,10 @@ void RBTree::printTreeUtil(Node * root, int space)
 	printTreeUtil(root->left, space);
 }
 
-Node* RBTree::getUncle(Node* n) {
+Node* RBTree::getUncle(Node* n) 
+{	//this function is a mess
+	//pretty just checks that nothign is null and then checks if the parent node is the left or right 
+	//then returns the other
 	if (n == nullptr || n->parent == nullptr || n->parent->parent == nullptr) {
 		return nullptr;
 	} else if (n->parent->parent->left == n->parent) {
@@ -190,47 +194,48 @@ Node* RBTree::getUncle(Node* n) {
 }
 
 void RBTree::rotateRight(Node* &head, Node * root)
-{
-	Node* leftTemp = root->left;
+{	//rotation n stuff
+	Node* leftTemp = root->left; //make sure nothing is lost
 
 	root->left = root->left->right;
-	if (root->left != nullptr) root->left->parent = root;
+	if (root->left != nullptr) root->left->parent = root; //moving the stuff up
 
-	leftTemp->right = root;
+	leftTemp->right = root; //moving the new top node up
 	leftTemp->parent = root->parent;
 
-	if (leftTemp->parent == nullptr) head = leftTemp;
-	else if (leftTemp->parent->right == root) leftTemp->parent->right = leftTemp;
+	if (leftTemp->parent == nullptr) head = leftTemp; //set parent
+	else if (leftTemp->parent->right == root) leftTemp->parent->right = leftTemp; //make sure the node actually connects to the tree
 	else leftTemp->parent->left = leftTemp;
 
-	root->parent = leftTemp;
+	root->parent = leftTemp; //parents again
 }
 
 void RBTree::rotateLeft(Node* &head, Node * root)
 {
-	Node* rightTemp = root->right;
+	Node* rightTemp = root->right;//make sure nothing is lost
 
 	root->right = root->right->left;
-	if (root->right != nullptr) root->right->parent = root;
+	if (root->right != nullptr) root->right->parent = root; //moving the stuff up
 
-	rightTemp->left = root;
+	rightTemp->left = root; //moving the new top node up
 	rightTemp->parent = root->parent;
 
-	if (rightTemp->parent == nullptr) head = rightTemp;
-	else if (rightTemp->parent->left == root) rightTemp->parent->left = rightTemp;
+	if (rightTemp->parent == nullptr) head = rightTemp; //set parent
+	else if (rightTemp->parent->left == root) rightTemp->parent->left = rightTemp; //make sure the node actually connects to the tree
 	else rightTemp->parent->right = rightTemp;
 
-	root->parent = rightTemp;
+	root->parent = rightTemp; //parents again
 }
 
 void RBTree::swapColor(Node * n)
-{
+{	//unused pay no attention
 	if (n->color == RED) n->color = BLACK;
 	else n->color = RED;
 }
 
 void RBTree::swapNodeColor(Node * n, Node * n2)
-{
+{	//swaps the colors of two nodes
+	//was lazy, its easy
 	Color temp = n->color;
 	n->color = n2->color;
 	n2->color = temp;

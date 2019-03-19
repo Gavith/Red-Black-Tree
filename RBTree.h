@@ -9,7 +9,7 @@ struct Node {
 	Node* parent = nullptr;
 	Node* left = nullptr;
 	Node* right = nullptr;
-	int val;
+	int val = 0;
 	Color color = BLACK;
 
 	Node(int val) {
