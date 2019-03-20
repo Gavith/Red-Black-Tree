@@ -33,6 +33,27 @@ void RBTree::resetTree()
 	head = nullptr;
 }
 
+bool RBTree::search(int val)
+{
+	return searchUtil(head, val);
+}
+
+bool RBTree::searchUtil(Node* root, int val) {
+	if (root == nullptr) {
+		return false;
+	}
+	else if (root->val == val) {
+		return true;
+	}
+	else if (val < root->val) {
+		return searchUtil(root->left, val);
+	}
+	else if (val > root->val) {
+		return searchUtil(root->right, val);
+	}
+	return false;
+}
+
 void RBTree::resetTreeUtil(Node * root)
 {	//deletes the sub-trees before
 	if (root->left) resetTreeUtil(root->left);

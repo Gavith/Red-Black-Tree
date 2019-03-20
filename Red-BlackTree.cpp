@@ -16,7 +16,7 @@ int main()
 	char* input = new char(10);
 	while (input[0] != 'q') {
 
-		cout << "1) add\n2) read\n3) print\n4) quit" << endl << "? ";
+		cout << "1) add\n2) read\n3) print\n4) search\n5) remove\n6) quit" << endl << "? ";
 
 		cin >> input;
 		cin.ignore(100, '\n');
@@ -57,11 +57,27 @@ int main()
 			t.printTree();
 			cout << "Colors: " << endl;
 			t.printTreeColor();
+		} 
+		else if (strcmp(input, "search") == 0) {
+			strcpy(input, "placeholder");
+			while (!isDigit(input)) {
+				cout << "Search for what number?" << endl << "? ";
+				cin.get(input, 100);
+				cin.ignore(100, '\n');
+				if (isDigit(input)) {
+					if (t.search(atoi(input))) {
+						cout << "The number is in the tree." << endl;
+					}
+					else {
+						cout << "The number is not in the tree." << endl;
+					}
+				}
+			}
 		}
+		else if (strcmp(input, "remove") == 0) {
 
+		}
 	}
-
-
 }
 
 void to_lower_char(char* c) {

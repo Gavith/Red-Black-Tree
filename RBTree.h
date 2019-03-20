@@ -26,6 +26,7 @@ public:
 	void printTree();
 	void printTreeColor();
 	void resetTree();
+	bool search(int val);
 private:
 	Node* head;
 
@@ -39,6 +40,7 @@ private:
 	void rotateLeft(Node* &head, Node* root);
 	void swapColor(Node* n);
 	void swapNodeColor(Node* n, Node* n2);
+	bool searchUtil(Node* root, int val);
 
 };
 
