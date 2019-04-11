@@ -27,6 +27,8 @@ public:
 	void printTreeColor();
 	void resetTree();
 	bool search(int val);
+	void remove(int val);
+
 private:
 	Node* head;
 
@@ -41,6 +43,9 @@ private:
 	void swapColor(Node* n);
 	void swapNodeColor(Node* n, Node* n2);
 	bool searchUtil(Node* root, int val);
+	void BSTdelete(int key);
+	Node* BSTdeleteUtil(Node *& root, int key);
+	Node* minval(Node *root);
 
 };
 

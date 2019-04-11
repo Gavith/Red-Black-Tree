@@ -38,6 +38,11 @@ bool RBTree::search(int val)
 	return searchUtil(head, val);
 }
 
+void RBTree::remove(int val)
+{
+	BSTdelete(val);
+}
+
 bool RBTree::searchUtil(Node* root, int val) {
 	if (root == nullptr) {
 		return false;
@@ -260,4 +265,58 @@ void RBTree::swapNodeColor(Node * n, Node * n2)
 	Color temp = n->color;
 	n->color = n2->color;
 	n2->color = temp;
+}
+
+void RBTree::BSTdelete(int key)
+{
+	head = BSTdeleteUtil(head, key);
+}
+//deletes the node from a given key
+Node* RBTree::BSTdeleteUtil(Node *&root, int key) {
+	if (root == nullptr) {//if theres nothing in the root
+		return root;
+	}
+	if (root->val > key) {//if the node we're looking for is less than the current node
+		root->left = BSTdeleteUtil(root->left, key);
+	}
+	else if (root->val < key) {//if the node we're looking for is greater than the current node
+		root->right = BSTdeleteUtil(root->right, key);
+	}
+	else {
+
+		if (!root->left && !root->right) { //it has no children
+			delete root;
+			return nullptr;
+		}
+		else if (!root->left) {//it has one children
+			Node* r = root->right;//move up the single child
+			root->right = nullptr;
+			delete root;
+			return r;
+		}
+		else if (!root->right) {//it has one children
+			Node* r = root->left;//move up the single child
+			root->left = nullptr;
+			delete root;
+			return r;
+		}
+		else {//i fit has 2 children
+			Node* min = minval(root->right);//find the minimum value of the right nodes
+			root->val = min->val;//set the node found
+			root->right = BSTdeleteUtil(root->right, min->val);//delete the node found
+			return root;
+		}
+	}
+	return root;
+}
+
+Node* RBTree::minval(Node * root)
+{
+	Node* cn = root;
+
+	while (cn->left) {
+		cn = cn->left;
+	}
+
+	return cn;
 }
