@@ -12,6 +12,7 @@ bool isDigit(char *c);
 
 int main()
 {
+	
 	RBTree t = RBTree();
 	char* input = new char(10);
 	while (input[0] != 'q') {
@@ -55,8 +56,6 @@ int main()
 		else if (strcmp(input, "print") == 0) {
 			cout << "Numbers: " << endl;
 			t.printTree();
-			cout << "Colors: " << endl;
-			t.printTreeColor();
 		} 
 		else if (strcmp(input, "search") == 0) {
 			strcpy(input, "placeholder");

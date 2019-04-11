@@ -1,6 +1,6 @@
 #include "RBTree.h"
 
-
+//THIS IS A TEST COMMENT
 
 RBTree::RBTree()
 {
@@ -36,6 +36,11 @@ void RBTree::resetTree()
 bool RBTree::search(int val)
 {
 	return searchUtil(head, val);
+}
+
+void RBTree::remove(int val)
+{
+	BSTdelete(val);
 }
 
 bool RBTree::searchUtil(Node* root, int val) {
@@ -137,40 +142,6 @@ void RBTree::fixTree(Node* &head, Node* x)
 
 }
 
-void RBTree::printTreeColor()
-{
-	if (head != nullptr) printTreeColorUtil(head, 0);
-}
-
-//TAKEN FROM https://www.geeksforgeeks.org/print-binary-tree-2-dimensions/
-void RBTree::printTreeColorUtil(Node * root, int space)
-{
-	// Base case 
-	if (root == nullptr)
-		return;
-
-	// Increase distance between levels 
-	space += SPACE;
-
-	//print right side 
-	printTreeColorUtil(root->right, space);
-
-	// Print current node after space 
-	// count 
-	cout << '\n';
-	for (int i = SPACE; i < space; i++)
-		cout << " ";
-	if (root->color == RED) {
-		cout << "R" << endl;
-	}
-	else if (root->color == BLACK) {
-		cout << "B" << endl;
-	}
-
-	// Process left child 
-	printTreeColorUtil(root->left, space);
-}
-
 void RBTree::printTree()
 {
 	if (head != nullptr) printTreeUtil(head, 0);
@@ -193,7 +164,10 @@ void RBTree::printTreeUtil(Node * root, int space)
 	cout << '\n';
 	for (int i = SPACE; i < space; i++)
 		cout << " ";
-	cout << root->val << endl;
+	if (root->color == RED) {
+		cout << "\033[91m";
+	}
+	cout << root->val << "\033[0m" << endl; 
 
 	// Process left child 
 	printTreeUtil(root->left, space);
@@ -260,4 +234,63 @@ void RBTree::swapNodeColor(Node * n, Node * n2)
 	Color temp = n->color;
 	n->color = n2->color;
 	n2->color = temp;
+}
+
+void RBTree::BSTdelete(int key)
+{
+	Node* v = nullptr;
+	Node* u = nullptr;
+	v = BSTdeleteUtil(head, key);//get the v node
+	if (v->right) u = v->right;//get u node
+	else if (v->left) u = v->left;
+
+	if (v->color == RED || (u && u->color == RED)) { //---Red Case
+		if (v == v->parent->right) v->parent->right = u; //set parent's downwards connection
+		else if (v == v->parent->left) v->parent->left = u;
+		if (u) {//if u is an actual node
+			u->parent = v->parent; //set its parent
+		}
+		delete v;
+	}
+	else if (v->color == BLACK && (!u || u->color == BLACK)) { //---Double Black Case
+
+	}
+
+}
+//deletes the node from a given key
+//modified for RBTree
+Node* RBTree::BSTdeleteUtil(Node *&root, int key) {
+	if (root == nullptr) {//if theres nothing in the root
+		return nullptr;
+	}
+	if (root->val > key) {//if the node we're looking for is less than the current node
+		return BSTdeleteUtil(root->left, key);
+	}
+	else if (root->val < key) {//if the node we're looking for is greater than the current node
+		return BSTdeleteUtil(root->right, key);
+	}
+	else {
+
+		if (root->left && root->right) { //it has no children
+			Node* min = minval(root->right);//find the minimum value of the right nodes
+			root->val = min->val;//set the node found
+			return BSTdeleteUtil(root->right, min->val);//delete the node found
+		}
+		else {//if it has one or 0 children we are clear to delete so pass it back
+			return root;
+		}
+		
+	}
+	return nullptr;
+}
+
+Node* RBTree::minval(Node * root)
+{
+	Node* cn = root;
+
+	while (cn->left) {
+		cn = cn->left;
+	}
+
+	return cn;
 }

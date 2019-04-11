@@ -1,7 +1,7 @@
 #include <iostream>
 
 #define SPACE 5
-enum Color {RED, BLACK};
+enum Color {RED, BLACK, DOUBLE_BLACK};
 
 using namespace std;
 
@@ -14,7 +14,7 @@ struct Node {
 
 	Node(int val) {
 		this->val = val;
-	}
+	}//h
 };
 
 class RBTree
@@ -24,15 +24,15 @@ public:
 	~RBTree();
 	void insert(int val);
 	void printTree();
-	void printTreeColor();
 	void resetTree();
 	bool search(int val);
+	void remove(int val);
+
 private:
 	Node* head;
 
 	void resetTreeUtil(Node* root);
 	void BSTinsert(Node* &root, Node* newNode);
-	void printTreeColorUtil(Node * root, int space);
 	void printTreeUtil(Node* root, int space);
 	void fixTree(Node* &head, Node* nn); 
 	Node* getUncle(Node* n);
@@ -41,6 +41,11 @@ private:
 	void swapColor(Node* n);
 	void swapNodeColor(Node* n, Node* n2);
 	bool searchUtil(Node* root, int val);
+	void BSTdelete(int key);
+	Node* BSTdeleteUtil(Node *& root, int key);
+	Node* minval(Node *root);
+
+
 
 };
 
