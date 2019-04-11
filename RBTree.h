@@ -1,7 +1,7 @@
 #include <iostream>
 
 #define SPACE 5
-enum Color {RED, BLACK, DOUBLE_BLACK};
+enum Color {RED, BLACK};
 
 using namespace std;
 

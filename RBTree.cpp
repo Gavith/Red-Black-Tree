@@ -240,6 +240,12 @@ void RBTree::BSTdelete(int key)
 {
 	Node* v = nullptr;
 	Node* u = nullptr;
+	//THESE NODES ARE USED DURING THE ACTUAL FIXING PART
+	//---------------
+	Node* s = nullptr;
+	Node* r = nullptr;
+	Node* p = nullptr;
+	//---------------
 	v = BSTdeleteUtil(head, key);//get the v node
 	if (v->right) u = v->right;//get u node
 	else if (v->left) u = v->left;
@@ -253,7 +259,56 @@ void RBTree::BSTdelete(int key)
 		delete v;
 	}
 	else if (v->color == BLACK && (!u || u->color == BLACK)) { //---Double Black Case
+		if (v == v->parent->right) v->parent->right = u; //set parent's downwards connection
+		else if (v == v->parent->left) v->parent->left = u;
+		if (u) {//if u is an actual node
+			u->parent = v->parent; //set its parent
+			
+		}
+		p = v->parent;
+		delete v;
+		//Modifying the tree
+		if (p) {//if its not head
+			if (u == p->right)  s = p->left;//get sibling
+			else if (u == p->left) s = p->right;
+			if (s->color == BLACK) {
+				if ((s->right && s->right->color == RED) || (s->left && s->left->color == RED)) {//--one of s's children is red
 
+
+					if (s->right && s->right->color == RED) r = s->right;
+					else if (s->left && s->left->color == RED) r = s->left;
+
+					if (p->right == s && s->right == r) {//-Right Right Case
+						rotateLeft(head, p);
+						r->color = BLACK;
+					}
+					else if (p->right == s && s->left == r) {//-Right Left Case
+						rotateRight(head, s);
+						rotateLeft(head, p);
+						s->color = BLACK;
+
+					}
+					else {//left cases
+						//if r can be either I want it to be left during left and right during right
+						//so I repeat this with left priority
+						if (s->left && s->left->color == RED) r = s->left;
+						else if (s->right && s->right->color == RED) r = s->right;
+
+						if (p->left == s && s->left == r) {//-Left Left
+							rotateRight(head, p);
+							r->color = BLACK;
+						}
+						else if (p->left == s && s->right == r) {//-Left Right
+							rotateLeft(head, s);
+							rotateRight(head, p);
+							s->color = BLACK;
+						}
+					}
+
+				}
+			}
+		}
+		
 	}
 
 }

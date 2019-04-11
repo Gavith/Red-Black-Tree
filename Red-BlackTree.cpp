@@ -74,7 +74,20 @@ int main()
 			}
 		}
 		else if (strcmp(input, "remove") == 0) {
+			do {
+				cout << "Enter a number" << endl;
+				int in;
 
+				cin >> input;
+				if (isDigit(input)) { //if the input is a digit
+					in = atoi(input); //add it
+					if (t.search(in)) {
+						t.remove(in);
+					}
+					else cout << "That number is not in the tree" << endl;
+				}
+				
+			} while (!isDigit(input));
 		}
 	}
 }
