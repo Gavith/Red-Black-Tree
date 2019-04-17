@@ -41,8 +41,9 @@ private:
 	void swapColor(Node* n);
 	void swapNodeColor(Node* n, Node* n2);
 	bool searchUtil(Node* root, int val);
-	void BSTdelete(int key);
+	void deleteUtil(int key);
 	Node* BSTdeleteUtil(Node *& root, int key);
+	void removeDoubleBlack(Node* &u, Node* parent);
 	Node* minval(Node *root);
 
 

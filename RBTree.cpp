@@ -40,7 +40,7 @@ bool RBTree::search(int val)
 
 void RBTree::remove(int val)
 {
-	BSTdelete(val);
+	deleteUtil(val);
 }
 
 bool RBTree::searchUtil(Node* root, int val) {
@@ -236,82 +236,121 @@ void RBTree::swapNodeColor(Node * n, Node * n2)
 	n2->color = temp;
 }
 
-void RBTree::BSTdelete(int key)
+void RBTree::deleteUtil (int key)
 {
 	Node* v = nullptr;
 	Node* u = nullptr;
-	//THESE NODES ARE USED DURING THE ACTUAL FIXING PART
-	//---------------
-	Node* s = nullptr;
-	Node* r = nullptr;
-	Node* p = nullptr;
-	//---------------
 	v = BSTdeleteUtil(head, key);//get the v node
 	if (v->right) u = v->right;//get u node
 	else if (v->left) u = v->left;
 
-	if (v->color == RED || (u && u->color == RED)) { //---Red Case
+	cout << v->val << endl;
+
+	if (v->color == RED) { //---Red Case
 		if (v == v->parent->right) v->parent->right = u; //set parent's downwards connection
 		else if (v == v->parent->left) v->parent->left = u;
 		if (u) {//if u is an actual node
 			u->parent = v->parent; //set its parent
+			u->color = BLACK;
 		}
 		delete v;
 	}
-	else if (v->color == BLACK && (!u || u->color == BLACK)) { //---Double Black Case
+	else if (v->color == BLACK) { //---Double Black Case
+		
 		if (v == v->parent->right) v->parent->right = u; //set parent's downwards connection
 		else if (v == v->parent->left) v->parent->left = u;
 		if (u) {//if u is an actual node
 			u->parent = v->parent; //set its parent
-			
 		}
-		p = v->parent;
+		Node* p = v->parent;
 		delete v;
-		//Modifying the tree
-		if (p) {//if its not head
-			if (u == p->right)  s = p->left;//get sibling
-			else if (u == p->left) s = p->right;
-			if (s->color == BLACK) {
-				if ((s->right && s->right->color == RED) || (s->left && s->left->color == RED)) {//--one of s's children is red
-
-
-					if (s->right && s->right->color == RED) r = s->right;
-					else if (s->left && s->left->color == RED) r = s->left;
-
-					if (p->right == s && s->right == r) {//-Right Right Case
-						rotateLeft(head, p);
-						r->color = BLACK;
-					}
-					else if (p->right == s && s->left == r) {//-Right Left Case
-						rotateRight(head, s);
-						rotateLeft(head, p);
-						s->color = BLACK;
-
-					}
-					else {//left cases
-						//if r can be either I want it to be left during left and right during right
-						//so I repeat this with left priority
-						if (s->left && s->left->color == RED) r = s->left;
-						else if (s->right && s->right->color == RED) r = s->right;
-
-						if (p->left == s && s->left == r) {//-Left Left
-							rotateRight(head, p);
-							r->color = BLACK;
-						}
-						else if (p->left == s && s->right == r) {//-Left Right
-							rotateLeft(head, s);
-							rotateRight(head, p);
-							s->color = BLACK;
-						}
-					}
-
-				}
-			}
-		}
+		removeDoubleBlack(u, p);
 		
 	}
 
 }
+
+
+void RBTree::removeDoubleBlack(Node* &u, Node* parent)
+{
+	Node* s = nullptr;
+	Node* p = parent;
+	Node* r = nullptr;
+
+	//delete it
+	
+	//Modifying the tree
+	if (p) {//if its not head
+		if (u == p->right)  s = p->left;//get sibling
+		else if (u == p->left) s = p->right;
+		if (s->color == BLACK) {
+			if ((s->right && s->right->color == RED) || (s->left && s->left->color == RED)) {//--one of s's children is red
+
+
+				if (s->right && s->right->color == RED) r = s->right;
+				else if (s->left && s->left->color == RED) r = s->left;
+
+				if (p->right == s && s->right == r) {//-Right Right Case
+					s->color = p->color;
+					rotateLeft(head, p);
+					p->color = BLACK;
+					r->color = BLACK;
+				}
+				else if (p->right == s && s->left == r) {//-Right Left Case
+					rotateRight(head, s);
+					swapNodeColor(s, s->parent);
+					r->color = p->color;
+					rotateLeft(head, p);
+					p->color = BLACK;
+					s->color = BLACK;
+				}
+				else {//left cases
+					//if r can be either I want it to be left during left and right during right
+					//so I repeat this with left priority
+					if (s->left && s->left->color == RED) r = s->left;
+					else if (s->right && s->right->color == RED) r = s->right;
+
+					if (p->left == s && s->left == r) {//-Left Left
+						s->color = p->color;
+						rotateLeft(head, p);
+						p->color = BLACK;
+						r->color = BLACK;
+					}
+					else if (p->left == s && s->right == r) {//-Left Right
+						rotateLeft(head, s);
+						swapNodeColor(s, s->parent);
+						r->color = p->color;
+						rotateRight(head, p);
+						p->color = BLACK;
+						s->color = BLACK;
+					}
+				}
+
+			}
+			else if (s->color == BLACK && ((!s->left || s->left->color == BLACK) && (!s->right || s->right->color == BLACK))) {//--all black case
+				s->color = RED;//This is some janky-ass recursion
+				if (p->color = RED) {
+					p->color = BLACK;
+				}
+				else {
+					removeDoubleBlack(p, p->parent);
+				}
+			}
+			else if (s->color == RED) {//sibling red
+				if (p->left == s) {
+					rotateRight(head, p);
+					removeDoubleBlack(u, u->parent);
+				}
+				else if (p->right == s) {
+					rotateLeft(head, p);
+					removeDoubleBlack(u, u->parent);
+				}
+			}
+		}
+	}
+}
+
+
 //deletes the node from a given key
 //modified for RBTree
 Node* RBTree::BSTdeleteUtil(Node *&root, int key) {
@@ -324,9 +363,9 @@ Node* RBTree::BSTdeleteUtil(Node *&root, int key) {
 	else if (root->val < key) {//if the node we're looking for is greater than the current node
 		return BSTdeleteUtil(root->right, key);
 	}
-	else {
+	else {//if its equal
 
-		if (root->left && root->right) { //it has no children
+		if (root->left && root->right) { //it has two children
 			Node* min = minval(root->right);//find the minimum value of the right nodes
 			root->val = min->val;//set the node found
 			return BSTdeleteUtil(root->right, min->val);//delete the node found
@@ -334,7 +373,7 @@ Node* RBTree::BSTdeleteUtil(Node *&root, int key) {
 		else {//if it has one or 0 children we are clear to delete so pass it back
 			return root;
 		}
-		
+
 	}
 	return nullptr;
 
