@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cstring>
 #include <fstream>
+#include <ctime>
 
 
 using namespace std;
@@ -12,12 +13,12 @@ bool isDigit(char *c);
 
 int main()
 {
-	
+	srand(time(0));
 	RBTree t = RBTree();
 	char* input = new char(10);
 	while (input[0] != 'q') {
 
-		cout << "1) add\n2) read\n3) print\n4) search\n5) remove\n6) quit" << endl << "? ";
+		cout << "1) add\n2) read\n3) print\n4) search\n5) remove\n6) generate\n7) quit" << endl << "? ";
 
 		cin >> input;
 		cin.ignore(100, '\n');
@@ -64,12 +65,7 @@ int main()
 				cin.get(input, 100);
 				cin.ignore(100, '\n');
 				if (isDigit(input)) {
-					if (t.search(atoi(input))) {
-						cout << "The number is in the tree." << endl;
-					}
-					else {
-						cout << "The number is not in the tree." << endl;
-					}
+					t.searchForNode(atoi(input));
 				}
 			}
 		}
@@ -88,6 +84,21 @@ int main()
 				}
 				
 			} while (!isDigit(input));
+		}
+		else if (strcmp(input, "generate") == 0) {
+			cout << "How many numbers?" << endl;
+			cin >> input;
+			if (isDigit(input)) {
+				int in = atoi(input);
+				while (in > 0) {
+					int temp = rand() % 1000;//this is for some reason really buggy in visual studio
+					//works in cygwin though
+					t.insert(temp);
+					in--;
+				}
+				
+
+			}
 		}
 	}
 }

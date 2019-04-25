@@ -33,7 +33,24 @@ void RBTree::resetTree()
 	head = nullptr;
 }
 
-bool RBTree::search(int val)
+bool RBTree::searchForNode(int val)
+{
+	Node* found = search(val);
+	if (!found) {
+		return false;
+	}
+	if (found->color == RED) found->color = RBLUE;
+	else found->color = BBLUE;
+
+	printTree();
+
+	if (found->color == BBLUE) found->color = BLACK;
+	else found->color = RED;
+
+	return true;
+}
+
+Node* RBTree::search(int val)
 {
 	return searchUtil(head, val);
 }
@@ -43,12 +60,12 @@ void RBTree::remove(int val)
 	deleteUtil(val);
 }
 
-bool RBTree::searchUtil(Node* root, int val) {
+Node* RBTree::searchUtil(Node* root, int val) {
 	if (root == nullptr) {
-		return false;
+		return nullptr;
 	}
 	else if (root->val == val) {
-		return true;
+		return root;
 	}
 	else if (val < root->val) {
 		return searchUtil(root->left, val);
@@ -56,7 +73,7 @@ bool RBTree::searchUtil(Node* root, int val) {
 	else if (val > root->val) {
 		return searchUtil(root->right, val);
 	}
-	return false;
+	return nullptr;
 }
 
 void RBTree::resetTreeUtil(Node * root)
@@ -167,6 +184,9 @@ void RBTree::printTreeUtil(Node * root, int space)
 	if (root->color == RED) {
 		cout << "\033[91m";
 	}
+	else if (root->color == RBLUE || root->color == BBLUE) {
+		cout << "\033[34m";
+	}
 	cout << root->val << "\033[0m" << endl; 
 
 	// Process left child 
@@ -240,25 +260,35 @@ void RBTree::deleteUtil (int key)
 {
 	Node* v = nullptr;
 	Node* u = nullptr;
+
 	v = BSTdeleteUtil(head, key);//get the v node
 	if (v->right) u = v->right;//get u node
 	else if (v->left) u = v->left;
 
 	cout << v->val << endl;
 
-	if (v->color == RED) { //---Red Case
-		if (v == v->parent->right) v->parent->right = u; //set parent's downwards connection
-		else if (v == v->parent->left) v->parent->left = u;
+	if (v->color == RED || (u && u->color == RED)) { //---Red Case
+		if (v->parent) {
+			if (v == v->parent->right) v->parent->right = u; //set parent's downwards connection
+			else if (v == v->parent->left) v->parent->left = u;
+		}
+		else {
+			head = u;
+		}
 		if (u) {//if u is an actual node
 			u->parent = v->parent; //set its parent
 			u->color = BLACK;
 		}
 		delete v;
 	}
-	else if (v->color == BLACK) { //---Double Black Case
-		
-		if (v == v->parent->right) v->parent->right = u; //set parent's downwards connection
-		else if (v == v->parent->left) v->parent->left = u;
+	else if (v->color == BLACK && (!u || u->color == BLACK)) { //---Double Black Case
+		if (v->parent) {
+			if (v == v->parent->right) v->parent->right = u; //set parent's downwards connection
+			else if (v == v->parent->left) v->parent->left = u;
+		}
+		else {
+			head = u;
+		}
 		if (u) {//if u is an actual node
 			u->parent = v->parent; //set its parent
 		}
@@ -328,12 +358,14 @@ void RBTree::removeDoubleBlack(Node* &u, Node* parent)
 
 			}
 			else if (s->color == BLACK && ((!s->left || s->left->color == BLACK) && (!s->right || s->right->color == BLACK))) {//--all black case
-				s->color = RED;//This is some janky-ass recursion
-				if (p->color = RED) {
+				s->color = RED;
+				if (p->color == RED) {
 					p->color = BLACK;
+					s->color = RED;
 				}
 				else {
-					removeDoubleBlack(p, p->parent);
+					s->color = RED;
+					removeDoubleBlack(p, p->parent);//recurse
 				}
 			}
 			else if (s->color == RED) {//sibling red
@@ -346,6 +378,11 @@ void RBTree::removeDoubleBlack(Node* &u, Node* parent)
 					removeDoubleBlack(u, u->parent);
 				}
 			}
+		}
+	}
+	else {
+		if (u) {
+			u->color = BLACK;
 		}
 	}
 }

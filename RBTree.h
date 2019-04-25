@@ -1,7 +1,7 @@
 #include <iostream>
 
 #define SPACE 5
-enum Color {RED, BLACK};
+enum Color {RED, BLACK, BBLUE, RBLUE}; //BBLUE and RBLUE are for saving the old color when finding
 
 using namespace std;
 
@@ -25,11 +25,14 @@ public:
 	void insert(int val);
 	void printTree();
 	void resetTree();
-	bool search(int val);
+	bool searchForNode(int val);
+	Node* search(int val);
 	void remove(int val);
 
 private:
 	Node* head;
+
+	
 
 	void resetTreeUtil(Node* root);
 	void BSTinsert(Node* &root, Node* newNode);
@@ -40,7 +43,7 @@ private:
 	void rotateLeft(Node* &head, Node* root);
 	void swapColor(Node* n);
 	void swapNodeColor(Node* n, Node* n2);
-	bool searchUtil(Node* root, int val);
+	Node* searchUtil(Node* root, int val);
 	void deleteUtil(int key);
 	Node* BSTdeleteUtil(Node *& root, int key);
 	void removeDoubleBlack(Node* &u, Node* parent);
