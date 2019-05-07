@@ -182,12 +182,18 @@ void RBTree::printTreeUtil(Node * root, int space)
 	for (int i = SPACE; i < space; i++)
 		cout << " ";
 	if (root->color == RED) {
-		cout << "\033[91m";
+		cout << "\033[91m" << root->val << "R";
 	}
-	else if (root->color == RBLUE || root->color == BBLUE) {
-		cout << "\033[34m";
+	else if (root->color == RBLUE) {
+		cout << "\033[34m" << root->val << "R";
 	}
-	cout << root->val << "\033[0m" << endl; 
+	else if (root->color == BBLUE) {
+		cout << "\033[34m" << root->val << "B";
+	}
+	else {//black
+		cout << root->val << "B";
+	}
+	cout << "\033[0m" << endl; 
 
 	// Process left child 
 	printTreeUtil(root->left, space);
